@@ -1,0 +1,12 @@
+FASTAPI:
+  WORKERS: 4
+  DEBUG: False
+  RELOAD: False
+  HOST: '0.0.0.0'
+  PORT: 4557
+
+MONGO:
+  HOST: "mongo"
+  PORT: 27017
+
+CREDENTIALS: "credentials.yaml"

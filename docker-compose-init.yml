@@ -1,0 +1,58 @@
+version: "3.5"
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_PASSWORD
+    ports:
+      - "0.0.0.0:27017:$MONGO_PORT"
+    networks:
+      - EOSC_USER_PROFILE_MONGO
+    volumes:
+      - type: volume
+        source: EOSC_USER_PROFILE_MONGO_DATA
+        target: /data/db
+      - type: volume
+        source: EOSC_USER_PROFILE_MONGO_CONFIG
+        target: /data/configdb
+      - type: bind
+        source: ./storage/dumps/recommender
+        target: /dump/recommender
+
+  postgres:
+    container_name: postgres
+    image: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      PGDATA: /data/postgres
+    volumes:
+      - type: volume
+        source: EOSCF_USER_PROFILE_POSTGRES_DATA
+        target: /data/postgres
+      - type: bind
+        source: ./storage/dumps/marketplace/mp_db_dump_ano.sql
+        target: /dump/mp_db_dump_ano.sql
+    ports:
+      - "5432:$POSTGRES_PORT"
+    networks:
+      - EOSC_USER_PROFILE_POSTGRES
+    restart: unless-stopped
+
+networks:
+  EOSC_USER_PROFILE_MONGO:
+    name: EOSC_USER_PROFILE_MONGO
+  EOSC_USER_PROFILE_POSTGRES:
+    name: EOSC_USER_PROFILE_POSTGRES
+    driver: bridge
+
+volumes:
+  EOSC_USER_PROFILE_MONGO_DATA:
+    name: EOSC_USER_PROFILE_MONGO_DATA
+  EOSC_USER_PROFILE_MONGO_CONFIG:
+    name: EOSC_USER_PROFILE_MONGO_CONFIG
+  EOSCF_USER_PROFILE_POSTGRES_DATA:
+    name: EOSCF_USER_PROFILE_POSTGRES_DATA

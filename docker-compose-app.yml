@@ -1,0 +1,38 @@
+version: "3.5"
+
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: $MONGO_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $MONGO_PASSWORD
+    networks:
+      - EOSC_USER_PROFILE_APP
+    volumes:
+      - type: volume
+        source: EOSC_USER_PROFILE_MONGO_DATA
+        target: /data/db
+      - type: volume
+        source: EOSC_USER_PROFILE_MONGO_CONFIG
+        target: /data/configdb
+
+  user-profile:
+    build: .
+    container_name: user-profile-app
+    ports:
+      - "0.0.0.0:4557:4557"
+    networks:
+      - EOSC_USER_PROFILE_APP
+    depends_on:
+      - mongo
+
+networks:
+  EOSC_USER_PROFILE_APP:
+    name: EOSC_USER_PROFILE_APP
+
+volumes:
+  EOSC_USER_PROFILE_MONGO_DATA:
+    name: EOSC_USER_PROFILE_MONGO_DATA
+  EOSC_USER_PROFILE_MONGO_CONFIG:
+    name: EOSC_USER_PROFILE_MONGO_CONFIG
