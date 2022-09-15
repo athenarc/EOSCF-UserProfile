@@ -13,7 +13,7 @@ def get_user_info(user_id):
     client = MongoClient(form_mongo_url())
 
     specific_user = {
-        'id': user_id
+        'user_id': user_id
     }
     result = client['user_profile']['user'].find_one(
         specific_user, {"_id": 0}
@@ -32,15 +32,15 @@ def get_user_info(user_id):
 def transform_uuids(usr):
     for action in usr['user_actions']:
         action['unique_id'] = str(UUID(bytes=action['unique_id']))
-        action['source']['visit_id'] = UUID(bytes=action['source']['visit_id'])
-        action['target']['visit_id'] = UUID(bytes=action['target']['visit_id'])
+        action['source']['visit_id'] = str(UUID(bytes=action['source']['visit_id']))
+        action['target']['visit_id'] = str(UUID(bytes=action['target']['visit_id']))
 
 
 def add_authorized_user_action(action):
     client = MongoClient(form_mongo_url())
-
+    print(action['user_id'])
     res = client['user_profile']['user'].update_one(
-        {"id": action['user_id']},
+        {"user_id": action['user_id']},
         {'$push': {'user_actions': action}}
     )
 
@@ -69,8 +69,11 @@ def add_anonymous_user_action(action):
 def add_user_action(action):
     if 'user_id' in action:
         res = add_authorized_user_action(action)
-    else:
+    elif action['unique_id'] is not None:
         res = add_anonymous_user_action(action)
+    else:
+        logger.info("No unique_id or user_id was given")
+        return
 
     if res.matched_count != 1:
         raise ValueError(f"Failed to find user on action: {action}")

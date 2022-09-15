@@ -2,13 +2,13 @@ version: "3.5"
 
 services:
   mongo:
-    image: mongo:latest
-    container_name: mongo
+    image: mongo:6.0
+    container_name: mongo_profile
     environment:
-      MONGO_INITDB_ROOT_USERNAME: $MONGO_USERNAME
-      MONGO_INITDB_ROOT_PASSWORD: $MONGO_PASSWORD
+      MONGO_INITDB_ROOT_USERNAME: $USER_PROFILE_MONGO_USERNAME
+      MONGO_INITDB_ROOT_PASSWORD: $USER_PROFILE_MONGO_PASSWORD
     ports:
-      - "0.0.0.0:27017:$MONGO_PORT"
+      - "0.0.0.0:$USER_PROFILE_MONGO_PORT:27017"
     networks:
       - EOSC_USER_PROFILE_MONGO
     volumes:
@@ -22,25 +22,15 @@ services:
         source: ./storage/dumps/recommender
         target: /dump/recommender
 
-  postgres:
-    container_name: postgres
-    image: postgres
-    environment:
-      POSTGRES_USER: ${POSTGRES_USER:-postgres}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
-      PGDATA: /data/postgres
+  redis:
+    image: redis:6.2-alpine
+    ports:
+      - '6379:6379'
+    command: redis-server --save 20 1 --loglevel warning --requirepass $INTERNAL_REDIS_PASSWORD
     volumes:
       - type: volume
-        source: EOSCF_USER_PROFILE_POSTGRES_DATA
-        target: /data/postgres
-      - type: bind
-        source: ./storage/dumps/marketplace/mp_db_dump_ano.sql
-        target: /dump/mp_db_dump_ano.sql
-    ports:
-      - "5432:$POSTGRES_PORT"
-    networks:
-      - EOSC_USER_PROFILE_POSTGRES
-    restart: unless-stopped
+        source: EOSCF_USER_PROFILE_REDIS_DATA
+        target: /data
 
 networks:
   EOSC_USER_PROFILE_MONGO:
@@ -56,3 +46,5 @@ volumes:
     name: EOSC_USER_PROFILE_MONGO_CONFIG
   EOSCF_USER_PROFILE_POSTGRES_DATA:
     name: EOSCF_USER_PROFILE_POSTGRES_DATA
+  EOSCF_USER_PROFILE_REDIS_DATA:
+    name: EOSCF_USER_PROFILE_REDIS_DATA

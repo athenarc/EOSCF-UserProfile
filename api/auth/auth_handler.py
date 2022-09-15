@@ -12,8 +12,8 @@ def decode_jwt(token: str) -> dict:
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        decoded_token = jwt.decode(token, APP_SETTINGS['CREDENTIALS']['JWT']['SECRET'],
-                                   algorithms=[APP_SETTINGS['CREDENTIALS']['JWT']['ALGORITHM']])
+        decoded_token = jwt.decode(token, APP_SETTINGS['CREDENTIALS']['JWT_SECRET'],
+                                   algorithms=[APP_SETTINGS['CREDENTIALS']['JWT_ALGORITHM']])
     except jwt.InvalidTokenError:
         raise credentials_exception
 

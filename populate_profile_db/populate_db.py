@@ -1,16 +1,13 @@
-import yaml
+from dotenv import dotenv_values
 from populate_profile_db.generate_profiles import (
     create_unauthenticated_profiles_from_dbs, create_user_profile_from_dbs)
 from pymongo import MongoClient
 
-with open('credentials.yaml') as file:
-    mongo_config = yaml.load(file, Loader=yaml.FullLoader)['MONGO']
-    MONGO_CONNECTION_STRING = f"mongodb://{mongo_config['USERNAME']}:{mongo_config['PASSWORD']}" \
-                              f"@{mongo_config['HOST']}:{mongo_config['PORT']}"
+from populate_profile_db.utils import form_mongo_url
 
 
 def import_user_profiles(user_profiles):
-    client = MongoClient(MONGO_CONNECTION_STRING)
+    client = MongoClient(form_mongo_url())
     client['user_profile']['user'].drop()
     client['user_profile']['user'].insert_many(user_profiles)
     client['user_profile']['user'].create_index('id', name='user_id_index')

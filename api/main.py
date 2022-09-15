@@ -21,7 +21,7 @@ def health_check():
 
 @app.on_event("startup")
 async def startup_event():
-    sentry_sdk.init(dsn=APP_SETTINGS['CREDENTIALS']['SENTRY']['DSN'],
+    sentry_sdk.init(dsn=APP_SETTINGS['CREDENTIALS']['SENTRY_DSN'],
                     traces_sample_rate=1.0)
     initialize_routes(app)
     initialize_databus_listeners()

@@ -1,14 +1,11 @@
-import yaml
+from dotenv import dotenv_values
 from pymongo import MongoClient
 
-with open('credentials.yaml') as file:
-    mongo_config = yaml.load(file, Loader=yaml.FullLoader)['MONGO']
-    MONGO_CONNECTION_STRING = f"mongodb://{mongo_config['USERNAME']}:{mongo_config['PASSWORD']}" \
-                              f"@{mongo_config['HOST']}:{mongo_config['PORT']}"
+from populate_profile_db.utils import form_mongo_url
 
 
 def get_user_recommendations(user_id):
-    client = MongoClient(MONGO_CONNECTION_STRING)
+    client = MongoClient(form_mongo_url())
 
     specific_user = {
         'user': user_id
@@ -25,7 +22,7 @@ def get_user_recommendations(user_id):
 
 
 def get_unauthenticated_user_recommendations(uid):
-    client = MongoClient(MONGO_CONNECTION_STRING)
+    client = MongoClient(form_mongo_url())
 
     specific_user = {
         'unique_id': uid

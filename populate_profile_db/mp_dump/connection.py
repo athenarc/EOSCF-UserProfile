@@ -1,17 +1,17 @@
 import psycopg2
 import yaml
+from dotenv import dotenv_values
 
-with open('credentials.yaml') as file:
-    POSTGRES = yaml.load(file, Loader=yaml.FullLoader)['POSTGRES']
+env_variables = dotenv_values(".env")
 
 
 def connect_and_query(query: str, params):
     conn = psycopg2.connect(
-        host=POSTGRES['HOST'],
-        port=POSTGRES['PORT'],
-        database=POSTGRES['DATABASE'],
-        user=POSTGRES['USER'],
-        password=POSTGRES['PASSWORD']
+        host=env_variables['POSTGRES_HOST'],
+        port=env_variables['POSTGRES_PORT'],
+        database=env_variables['POSTGRES_DATABASE'],
+        user=env_variables['POSTGRES_USER'],
+        password=env_variables['POSTGRES_PASSWORD']
     )
 
     cur = conn.cursor()

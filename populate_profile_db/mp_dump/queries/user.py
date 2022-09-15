@@ -3,7 +3,7 @@ from populate_profile_db.mp_dump.connection import connect_and_query
 
 
 def get_users():
-    user_attributes = ['id', 'uid', 'email', 'first_name', 'last_name', 'roles_mask', 'created_at']
+    user_attributes = ['id', 'roles_mask', 'created_at']
 
     select_attributes = ', '.join(user_attributes)
     query = f'SELECT {select_attributes} FROM users'

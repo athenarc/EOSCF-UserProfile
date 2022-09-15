@@ -1,6 +1,7 @@
 import argparse
 
 import yaml
+from dotenv import dotenv_values
 
 
 def read_settings():
@@ -13,8 +14,7 @@ def read_settings():
     with open(args.config_file) as file:
         backend_settings = yaml.load(file, Loader=yaml.FullLoader)
 
-    with open(backend_settings['CREDENTIALS']) as file:
-        credentials = yaml.load(file, Loader=yaml.FullLoader)
+    credentials = dotenv_values(".env")
 
     return {
         'BACKEND': backend_settings,

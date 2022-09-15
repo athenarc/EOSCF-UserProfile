@@ -15,13 +15,10 @@ Prerequisites:
 
 **Step 1: Copy the dump files**
 1. Copy the RS dump files to `storage/dumps/recommender/`
-2. Copy the marketplace dump file (`.sql`) to `storage/dumps/marketplace/`
 
 The final directory structure should look like:
 ```
 storage/dumps/
-  marketplace/
-    mp_dump_name.sql
   recommender/
     access_mode.bson
     access_mode.metadata.json
@@ -29,13 +26,30 @@ storage/dumps/
     ...
 ```
 
-**Step 2: Set up the credentials**
-1. Change the default values for usernames and passwords in `credentials.yml`
+**Step 2: Create the .env file**
+```shell
+USER_PROFILE_MONGO_HOST=localhost
+USER_PROFILE_MONGO_PORT=27017
+USER_PROFILE_MONGO_USERNAME="admin"
+USER_PROFILE_MONGO_PASSWORD="admin"
+
+USER_PROFILE_MONGO_DATABASE=user_profile
+RS_MONGO_DB=rs_dump  # The database name in the RS dump used for initialization
+
+DATABUS_HOST="eosc..."
+DATABUS_PORT="1234..."
+DATABUS_LOGIN="user"
+DATABUS_PASSWORD="pass"
+
+SENTRY_DSN="https://asdasd..."
+CRONITOR_API_KEY=123123123...
+```
 
 
-**Step 3: User Profile DB initialization (~4min)**
+**Step 3: User Profile DB initialization (~5min)**
 1. Install the initial setup python requirements (`populate_profile_db/requirements.txt`)
-2. Run `populate_profile_db/main.py`
+2. Run `docker-compose -f docker-compose-init.yml up`
+3. Run `python initialize_user_profile.py`
 
 
 ## Running
